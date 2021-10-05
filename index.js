@@ -147,7 +147,7 @@ function calculate(calcString){
     }
      
     resultDisplay.textContent=displayContainer+"= "+sum;
-    displayContainer="";
+    displayContainer=sum.toString();
     
 }
 function operate(operator,a,b){
