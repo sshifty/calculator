@@ -5,12 +5,31 @@ const clearButton=document.querySelector(".btn-clear");
 const deleteButton=document.querySelector(".btn-delete");
 const displayDownP=document.querySelector(".display-down");
 const resultDisplay=document.querySelector('.display-up');
+const dotButton=document.querySelector('.btn-dot');
 let displayContainer="";
+const isOperator=null;
+let disable=false;
 
+console.log(dotButton)
 
-
-
+function disableToggleButtons(){
+    if(disable){
+        numberButtons.forEach(num=>{       
+            num.setAttribute("disabled","");                        
+        });    
+        dotButton.setAttribute("disabled","");    
+    }else{
+        numberButtons.forEach(num=>{       
+            num.removeAttribute("disabled");                       
+        });
+        dotButton.removeAttribute("disabled");   
+        
+    } 
+    
+}
 clearButton.addEventListener("click",e=>{
+    disable=false;
+    disableToggleButtons();
     displayContainer="";    
     displayDownP.textContent=displayContainer;
     resultDisplay.textContent="";
@@ -23,38 +42,49 @@ deleteButton.addEventListener('click',e=>{
 
     };
 })
-numberButtons.forEach(num=>{
-    num.addEventListener('click',e=>{
-        let isNul=displayContainer.charAt(displayContainer.length-1);       
-        displayContainer+=e.target.dataset.number;
-        displayDownP.textContent=displayContainer;                      
-    });
+
+numberButtons.forEach(num => {
+    
+        console.log(displayContainer.length);
+        num.addEventListener('click', e => {
+            if(displayContainer.length < 20){
+                displayContainer += e.target.dataset.number;
+                displayDownP.textContent = displayContainer;
+            }            
+        });    
 });
 
 operatorNumbers.forEach(op=>{
     op.addEventListener("click",e=>{
         let calculation=displayContainer.match(/\d+|[^0-9]/g);
-        let isOk=calculation[calculation.length-1].match(/[0-9]/);
-        if(e.target.dataset.operator==="="){
-            if(calculation && calculation.length>2 && isOk){
-                calculate(displayContainer);
-            }            
-        }else if(!displayContainer && e.target.dataset.operator==='-'){
-            displayContainer+=e.target.dataset.operator;
-            displayDownP.textContent=displayContainer;
-        }
-        else{
-            if(displayContainer && (displayContainer[displayContainer.length-1].match(/[\/*+-]/))){
-                let char=displayContainer.charAt(displayContainer.length-1);
-                displayContainer=displayContainer.replace(char,e.target.dataset.operator)
-                displayDownP.textContent=displayContainer;              
-                
-            }
-            if(displayContainer && (displayContainer[displayContainer.length-1].match(/[0-9]/))){                  
+        let isOk=calculation[calculation.length-1].match(/[0-9]/);        
+            if(e.target.dataset.operator==="="){
+                if(calculation && calculation.length>2 && isOk){
+                    calculate(displayContainer);                
+                }            
+            }else if(!displayContainer && e.target.dataset.operator==='-'){
+                disable=false;
+                disableToggleButtons();
                 displayContainer+=e.target.dataset.operator;
                 displayDownP.textContent=displayContainer;
-            };            
-        };     
+            }
+            else{
+                if(displayContainer && (displayContainer[displayContainer.length-1].match(/[\/*+-]/))){
+                    disable=false;
+                    disableToggleButtons();
+                    let char=displayContainer.charAt(displayContainer.length-1);
+                    displayContainer=displayContainer.replace(char,e.target.dataset.operator)
+                    displayDownP.textContent=displayContainer;              
+                    
+                }
+                if(displayContainer && (displayContainer[displayContainer.length-1].match(/[0-9]/))){ 
+                    disable=false;
+                    disableToggleButtons();                 
+                    displayContainer+=e.target.dataset.operator;
+                    displayDownP.textContent=displayContainer;
+                };            
+            };     
+            
     });
 });
 
@@ -148,6 +178,9 @@ function calculate(calcString){
      
     resultDisplay.textContent=displayContainer+"= "+sum;
     displayContainer=sum.toString();
+    disable=true;
+    disableToggleButtons();
+    
     
 }
 function operate(operator,a,b){
