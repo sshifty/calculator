@@ -25,8 +25,9 @@ deleteButton.addEventListener('click',e=>{
 })
 numberButtons.forEach(num=>{
     num.addEventListener('click',e=>{
+        let isNul=displayContainer.charAt(displayContainer.length-1);       
         displayContainer+=e.target.dataset.number;
-        displayDownP.textContent=displayContainer;        
+        displayDownP.textContent=displayContainer;                      
     });
 });
 
@@ -49,7 +50,7 @@ operatorNumbers.forEach(op=>{
                 displayDownP.textContent=displayContainer;              
                 
             }
-            if(displayContainer && (displayContainer[displayContainer.length-1].match(/[0-9]/)) ){                
+            if(displayContainer && (displayContainer[displayContainer.length-1].match(/[0-9]/))){                  
                 displayContainer+=e.target.dataset.operator;
                 displayDownP.textContent=displayContainer;
             };            
@@ -84,17 +85,36 @@ function divine(a,b){
 
 function calculate(calcString){
     let sum;
-    let vmi;
+    
     let calculation=calcString.match(/\d+|[^0-9]/g);
+    console.log(calculation)
+
     if(calculation[0]==='-'){
         let minus=0-parseInt(calculation[1]);
         let word=minus.toString();
         calculation.splice(0,2,word);
     }    
-    let done=false;
+    let done=isFloatDone=false;
+    //creating float numbers
     do{
         let length=calculation.length;
-         done=true;
+        isFloatDone=true;
+        for(let j=0;j<length;j++){
+            length=calculation.length;
+           if(calculation[j].match(/[.]/)){          
+               
+               let floatNum=calculation[j-1]+calculation[j]+calculation[j+1] ; 
+                        
+               calculation.splice(j-1,3,floatNum);
+               done=false;
+               break;
+           }
+       }
+    }while(!isFloatDone)
+    //Doing multiply, divinie first left to right, leaving only add and subtract
+    do{
+        let length=calculation.length;
+         done=true;         
         for(let i=0;i<length;i++){
             if(calculation[i].match(/[\/*]/)){                
                 let a=calculation[i-1];

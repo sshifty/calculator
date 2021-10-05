@@ -21,6 +21,7 @@ body{
     justify-content: center;
     align-items: center;
     height:100vh;
+    font-family: 'Roboto', sans-serif;
 }
 
 .calculator{ 
@@ -53,7 +54,7 @@ body{
     flex-flow: row-reverse;
     padding:5px;
     min-height: 30px;
-    font-size: 1.3em;
+    font-size: 1.5em;
 }
 .display-up{
     border-bottom:2px dashed white;
